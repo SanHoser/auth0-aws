@@ -2,9 +2,9 @@ var AWS = require('aws-sdk');
 var DOC = require('dynamodb-doc');
 var dynamo = new DOC.DynamoDB();
 var jwt = require('jsonwebtoken');
+var env = require('auth0-variables');
 
-var secret = 'FmNi....PqY-xM';
-var tokenRegex = /bearer (.*)/;
+var secret = env.AUTH0_SECRET;
     
 exports.handler = function(event, context) {
     console.log('event:', event);
@@ -58,10 +58,8 @@ exports.handler = function(event, context) {
 
    // purchase execution logic.
     if(event.authToken) {
-        var parseToken = tokenRegex.exec(event.authToken);
-
         if(parseToken.length === 2) {
-            jwt.verify(parseToken[1], new Buffer(secret, 'base64'), function(err, decoded) {
+            jwt.verify(event.authToken, new Buffer(secret, 'base64'), function(err, decoded) {
                 if(err) {
                     console.log('err, failed jwt verification: ', err, 'auth: ', event.authToken);
                     context.done('authorization failure', null);
