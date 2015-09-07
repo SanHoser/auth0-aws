@@ -32,7 +32,7 @@ angular.module( 'sample.home', ['auth0'])
         accessKey: awstoken.AccessKeyId,
         secretKey: awstoken.SecretAccessKey,
         sessionToken: awstoken.SessionToken,
-        region: 'us-east-1' // OPTIONAL: by default this parameter is set to us-east-1
+        region: 'us-east-1' // Set to your region
     });
   }
 
@@ -41,7 +41,7 @@ angular.module( 'sample.home', ['auth0'])
   }
 
   function buyPet(user, id) {
-      window.alert('putPets not implemented');
+      window.alert('buyPet not implemented');
   }
   
   $scope.addPets = function() {

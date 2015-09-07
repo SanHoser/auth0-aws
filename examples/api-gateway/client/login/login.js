@@ -9,7 +9,7 @@ angular.module( 'sample.login', [
       return {
           "id_token": token, 
           "role":"arn:aws:iam::012345678901:role/auth0-api-role",
-          "principal": "arn:aws:iam::012345678901:saml-provider/auth0-api"
+          "principal": "arn:aws:iam::012345678901:saml-provider/auth0"
 
         };
       }
@@ -17,7 +17,7 @@ angular.module( 'sample.login', [
       return {
           "id_token": token, 
           "role":"arn:aws:iam::012345678901:role/auth0-api-social-role",
-          "principal": "arn:aws:iam::012345678901:saml-provider/auth0-api"
+          "principal": "arn:aws:iam::012345678901:saml-provider/auth0"
         };
     }
   }
@@ -30,28 +30,27 @@ angular.module( 'sample.login', [
       };
 
     auth.signin(params, function(profile, token) {
-      // set isAdmin based upon whether or not a social login. Often you'll do
-      // something more sophisticated than this.
+      //Set user as admin if they did not use a social login.
+      profile.isAdmin = !profile.identities[0].isSocial;
       store.set('profile', profile);
       store.set('token', token);
 
-      // get delegation token from identity token.
-      profile.isAdmin = !profile.identities[0].isSocial;
+      // get delegation token from identity token. 
       var options = getOptionsForRole(profile.isAdmin, token);
 
-      // TODO: Step 1: Enable this section once you setup AWS delegation.
+      // TODO: Step 3: Enable this section once you setup AWS delegation.
       /*
       auth.getToken(options)
         .then(
           function(delegation)  {
-            store.set('awstoken', delegation.Credentials);  //add to local storage
+            store.set('awstoken', delegation.Credentials);  
             $location.path("/");
           }, 
         function(err) {
            console.log('failed to acquire delegation token', err);
       });
       */
-      // TODO: Step 1: Remove this redirect after you add the get token API.
+      // TODO: Step 3: Remove this redirect after you add the get token API.
       $location.path("/");
 
     }, function(error) {

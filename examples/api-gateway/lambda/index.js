@@ -58,27 +58,22 @@ exports.handler = function(event, context) {
 
    // purchase execution logic.
     if(event.authToken) {
-        if(parseToken.length === 2) {
-            jwt.verify(event.authToken, new Buffer(secret, 'base64'), function(err, decoded) {
-                if(err) {
-                    console.log('err, failed jwt verification: ', err, 'auth: ', event.authToken);
-                    context.done('authorization failure', null);
-                } else if(!decoded.email)
-                {
-                    console.log('err, email missing in jwt', 'jwt: ', decoded);
-                    context.done('authorization failure', null);
-                } else {
-                    userEmail = decoded.email;
-                    console.log('start PetsPurchase, petId', petId, 'userEmail:', userEmail);
-                    dynamo.getItem({TableName:"Pets", Key:{username:"default"}}, readcb);
-                }
-            });
-        } else {
-            console.log('invalid authorization header', event.authToken);
-            context.done('authorization failure', null);
-        }
+        jwt.verify(event.authToken, new Buffer(secret, 'base64'), function(err, decoded) {
+            if(err) {
+                console.log('err, failed jwt verification: ', err, 'auth: ', event.authToken);
+                context.done('authorization failure', null);
+            } else if(!decoded.email)
+            {
+                console.log('err, email missing in jwt', 'jwt: ', decoded);
+                context.done('authorization failure', null);
+            } else {
+                userEmail = decoded.email;
+                console.log('start PetsPurchase, petId', petId, 'userEmail:', userEmail);
+                dynamo.getItem({TableName:"Pets", Key:{username:"default"}}, readcb);
+            }
+        });
     } else {
-        console.log('missing authorization header');
+        console.log('invalid authorization header', event.authToken);
         context.done('authorization failure', null);
     }
 };
