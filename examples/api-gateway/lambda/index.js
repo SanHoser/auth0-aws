@@ -58,9 +58,10 @@ exports.handler = function(event, context) {
 
    // purchase execution logic.
     if(event.authToken) {
-        jwt.verify(event.authToken, new Buffer(secret, 'base64'), function(err, decoded) {
+        var secretBuf = new Buffer(secret, 'base64');
+        jwt.verify(event.authToken, secretBuf, function(err, decoded) {
             if(err) {
-                console.log('err, failed jwt verification: ', err, 'auth: ', event.authToken);
+                console.log('failed jwt verify: ', err, 'auth: ', event.authToken);
                 context.done('authorization failure', null);
             } else if(!decoded.email)
             {
@@ -68,12 +69,12 @@ exports.handler = function(event, context) {
                 context.done('authorization failure', null);
             } else {
                 userEmail = decoded.email;
-                console.log('start PetsPurchase, petId', petId, 'userEmail:', userEmail);
+                console.log('authorized, petId', petId, 'userEmail:', userEmail);
                 dynamo.getItem({TableName:"Pets", Key:{username:"default"}}, readcb);
             }
         });
     } else {
-        console.log('invalid authorization header', event.authToken);
+        console.log('invalid authorization token', event.authToken);
         context.done('authorization failure', null);
     }
 };

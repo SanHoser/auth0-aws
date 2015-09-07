@@ -2,6 +2,7 @@ angular.module( 'sample.home', ['auth0'])
 .controller( 'HomeCtrl', function HomeController( $scope, auth, $http, $location, store ) {
   $scope.pets = [];
   $scope.isAdmin = store.get('profile').isAdmin;
+  $scope.profile = store.get('profile');
   $scope.adding = false;
 
   function showError(response) {
